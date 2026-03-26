@@ -11,7 +11,7 @@
   <!-- Setup screen (shown if no orgSlug saved) -->
   <div id="setup-screen" class="screen hidden">
     <div class="header">
-      <div class="logo-dot"></div>
+      <img src="icon48.png" class="logo-img" alt="" />
       <span class="logo-text">Coelacanth</span>
     </div>
     <p class="setup-label">Enter your organisation code to get started</p>
@@ -30,23 +30,31 @@
   <!-- Main widget -->
   <div id="main-screen" class="screen hidden">
     <div class="header">
-      <div class="logo-dot"></div>
+      <img src="icon48.png" class="logo-img" alt="" />
       <span class="logo-text">Coelacanth</span>
       <span class="anon-badge">Anonymous</span>
     </div>
 
     <div id="form-area">
-      <textarea
-        id="idea-input"
-        class="textarea"
-        placeholder="Share an idea or suggestion…"
-        maxlength="1000"
-        rows="4"
-      ></textarea>
+      <div class="textarea-wrap">
+        <textarea
+          id="idea-input"
+          class="textarea"
+          placeholder="What's something we could improve or do better?"
+          maxlength="1000"
+        ></textarea>
+        <button id="attach-btn" class="attach-btn" title="Attach a file" type="button">
+          <svg width="14" height="13" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.5 3C1.5 2.17 2.17 1.5 3 1.5H6.5L8 3H13C13.83 3 14.5 3.67 14.5 4.5V11C14.5 11.83 13.83 12.5 13 12.5H3C2.17 12.5 1.5 11.83 1.5 11V3Z" stroke="#5d879a" stroke-width="1.25" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </button>
+        <input type="file" id="file-input" class="hidden" accept=".pdf,.doc,.docx,.png,.jpg,.txt" />
+      </div>
+      <div id="file-name" class="file-name hidden"></div>
       <div id="char-count" class="char-count">0 / 1000</div>
 
       <select id="category-select" class="select">
-        <option value="">Select a category (optional)</option>
+        <option value="">Category (optional)</option>
         <option value="operations">Operations</option>
         <option value="culture">Culture</option>
         <option value="product">Product</option>
@@ -64,15 +72,14 @@
 
       <div id="form-error" class="error-msg hidden"></div>
 
-      <button id="submit-btn" class="submit-btn">Submit anonymously</button>
+      <button id="submit-btn" class="submit-btn">Submit</button>
     </div>
 
     <!-- Success state -->
     <div id="success-area" class="hidden success-area">
       <div class="success-icon">✓</div>
-      <p class="success-title">Submitted.</p>
-      <p class="success-body">Your idea has been added.</p>
-      <p id="similar-count" class="similar-count hidden"></p>
+      <p class="success-title">Your idea has been added.</p>
+      <p class="success-body">Thank you for helping us improve.</p>
     </div>
   </div>
 

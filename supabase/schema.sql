@@ -58,3 +58,6 @@ create table if not exists waitlist (
 );
 
 create index if not exists waitlist_signed_up on waitlist(signed_up_at desc);
+
+-- File attachments on ideas
+alter table ideas add column if not exists attachment_path text;

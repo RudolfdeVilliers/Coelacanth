@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coelacanth</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+  <!-- Setup screen (shown if no orgSlug saved) -->
+  <div id="setup-screen" class="screen hidden">
+    <div class="header">
+      <div class="logo-dot"></div>
+      <span class="logo-text">Coelacanth</span>
+    </div>
+    <p class="setup-label">Enter your organisation code to get started</p>
+    <input
+      type="text"
+      id="slug-input"
+      class="input"
+      placeholder="e.g. acme-corp"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <div id="setup-error" class="error-msg hidden"></div>
+    <button id="slug-save-btn" class="submit-btn">Save &amp; continue</button>
+  </div>
+
+  <!-- Main widget -->
+  <div id="main-screen" class="screen hidden">
+    <div class="header">
+      <div class="logo-dot"></div>
+      <span class="logo-text">Coelacanth</span>
+      <span class="anon-badge">Anonymous</span>
+    </div>
+
+    <div id="form-area">
+      <textarea
+        id="idea-input"
+        class="textarea"
+        placeholder="Share an idea or suggestion…"
+        maxlength="1000"
+        rows="4"
+      ></textarea>
+      <div id="char-count" class="char-count">0 / 1000</div>
+
+      <select id="category-select" class="select">
+        <option value="">Select a category (optional)</option>
+        <option value="operations">Operations</option>
+        <option value="culture">Culture</option>
+        <option value="product">Product</option>
+        <option value="management">Management</option>
+        <option value="other">Other</option>
+      </select>
+
+      <div class="toggle-row">
+        <label class="toggle-label" for="anon-toggle">Submit anonymously</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="anon-toggle" checked disabled />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div id="form-error" class="error-msg hidden"></div>
+
+      <button id="submit-btn" class="submit-btn">Submit anonymously</button>
+    </div>
+
+    <!-- Success state -->
+    <div id="success-area" class="hidden success-area">
+      <div class="success-icon">✓</div>
+      <p class="success-title">Submitted.</p>
+      <p class="success-body">Your idea has been added.</p>
+      <p id="similar-count" class="similar-count hidden"></p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

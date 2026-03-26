@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes fishBob {
+  0%, 100% { transform: translateY(-8px); }
+  50%       { transform: translateY(8px); }
+}
+
+@keyframes finShimmer {
+  0%, 100% { opacity: 0; }
+  50%       { opacity: 0.18; }
+}
+
+.fish-bob {
+  animation: fishBob 4s ease-in-out infinite;
+}
+
+.fish-wrap {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+/* Spot shimmer overlay — simulates iridescent fin detail */
+.fish-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 40% 20% at 28% 38%, rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(ellipse 20% 12% at 55% 28%, rgba(255,255,255,0.75) 0%, transparent 100%),
+    radial-gradient(ellipse 18% 10% at 72% 55%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(ellipse 14% 8%  at 40% 65%, rgba(255,255,255,0.6) 0%, transparent 100%);
+  mix-blend-mode: screen;
+  animation: finShimmer 3.2s ease-in-out infinite;
+  pointer-events: none;
+  border-radius: 4px;
+}

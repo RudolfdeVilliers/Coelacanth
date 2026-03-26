@@ -2,6 +2,16 @@ import { getSupabaseAdmin } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: corsHeaders })
+}
+
 // ANONYMITY: do not add user tracking here
 // Simple in-memory rate limiter: max 20 requests/min per orgSlug
 const rateLimitMap = new Map()
@@ -38,43 +48,43 @@ export async function POST(req) {
   try {
     body = await req.json()
   } catch {
-    return Response.json({ error: 'Invalid JSON' }, { status: 400 })
+    return Response.json({ error: 'Invalid JSON' }, { status: 400, headers: corsHeaders })
   }
 
   const { idea, category, orgSlug, file } = body
 
   // Validate
   if (!idea || typeof idea !== 'string') {
-    return Response.json({ error: 'idea is required' }, { status: 400 })
+    return Response.json({ error: 'idea is required' }, { status: 400, headers: corsHeaders })
   }
   if (idea.length < 5 || idea.length > 1000) {
-    return Response.json({ error: 'idea must be between 5 and 1000 characters' }, { status: 400 })
+    return Response.json({ error: 'idea must be between 5 and 1000 characters' }, { status: 400, headers: corsHeaders })
   }
   if (!orgSlug || typeof orgSlug !== 'string') {
-    return Response.json({ error: 'orgSlug is required' }, { status: 400 })
+    return Response.json({ error: 'orgSlug is required' }, { status: 400, headers: corsHeaders })
   }
 
   const validCategories = ['operations', 'culture', 'product', 'management', 'other']
   if (category && !validCategories.includes(category)) {
-    return Response.json({ error: 'invalid category' }, { status: 400 })
+    return Response.json({ error: 'invalid category' }, { status: 400, headers: corsHeaders })
   }
 
   // Validate file if present
   if (file) {
     if (!file.name || !file.type || !file.data) {
-      return Response.json({ error: 'invalid file attachment' }, { status: 400 })
+      return Response.json({ error: 'invalid file attachment' }, { status: 400, headers: corsHeaders })
     }
     const allowedTypes = ['application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'image/png', 'image/jpeg', 'text/plain']
     if (!allowedTypes.includes(file.type)) {
-      return Response.json({ error: 'unsupported file type' }, { status: 400 })
+      return Response.json({ error: 'unsupported file type' }, { status: 400, headers: corsHeaders })
     }
   }
 
   // Rate limit
   if (!checkRateLimit(orgSlug)) {
-    return Response.json({ error: 'Too many submissions. Please wait a moment.' }, { status: 429 })
+    return Response.json({ error: 'Too many submissions. Please wait a moment.' }, { status: 429, headers: corsHeaders })
   }
 
   const db = getSupabaseAdmin()
@@ -87,7 +97,7 @@ export async function POST(req) {
     .single()
 
   if (orgError || !org) {
-    return Response.json({ error: 'Organisation not found' }, { status: 404 })
+    return Response.json({ error: 'Organisation not found' }, { status: 404, headers: corsHeaders })
   }
 
   // Strip PII before saving
@@ -105,7 +115,7 @@ export async function POST(req) {
     .single()
 
   if (insertError || !newIdea) {
-    return Response.json({ error: 'Failed to save idea' }, { status: 500 })
+    return Response.json({ error: 'Failed to save idea' }, { status: 500, headers: corsHeaders })
   }
 
   // Handle file attachment if present
@@ -138,5 +148,5 @@ export async function POST(req) {
     .eq('org_id', org.id)
     .gte('submitted_at', weekAgo)
 
-  return Response.json({ ok: true, similar_count: count ?? 0 })
+  return Response.json({ ok: true, similar_count: count ?? 0 }, { headers: corsHeaders })
 }

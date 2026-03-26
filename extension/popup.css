@@ -38,6 +38,9 @@ body {
   height: 20px;
   object-fit: contain;
   flex-shrink: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
 }
 
 .logo-text {

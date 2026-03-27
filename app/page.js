@@ -3,8 +3,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
 
-const rocaOne = { fontFamily: "'Roca One', cursive" }
-
 export default function WaitlistPage() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
@@ -51,7 +49,6 @@ export default function WaitlistPage() {
 
       {/* Brand name */}
       <p style={{
-        ...rocaOne,
         color: '#083470',
         fontSize: '13px',
         fontWeight: 400,
@@ -64,10 +61,9 @@ export default function WaitlistPage() {
 
       {/* Headline */}
       <h1 style={{
-        ...rocaOne,
         color: '#083470',
         fontSize: '40px',
-        fontWeight: 400,
+        fontWeight: 500,
         margin: '0 0 16px',
         textAlign: 'center',
         lineHeight: 1.15,

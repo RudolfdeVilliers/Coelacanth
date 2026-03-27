@@ -7,8 +7,8 @@ const dmSans = DM_Sans({
 })
 
 export const metadata = {
-  title: 'Coelacanth — One widget. Every tool.',
-  description: 'The desktop widget that connects to all your apps. Gmail, Slack, Notion, Figma and more. Just type it. Consider it done.',
+  title: 'Coelacanth — One Coelacanth. Many apps.',
+  description: 'A single Coelacanth that connects to all your apps.',
 }
 
 export default function RootLayout({ children }) {

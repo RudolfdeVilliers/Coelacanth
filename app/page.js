@@ -49,41 +49,41 @@ export default function WaitlistPage() {
 
       {/* Brand name */}
       <p style={{
-        color: '#083470',
+        color: '#4bd4c7',
         fontSize: '13px',
         fontWeight: 400,
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
         marginBottom: '8px',
+        fontFamily: "'Montserrat', sans-serif",
       }}>
         Coelacanth
       </p>
 
       {/* Headline */}
       <h1 style={{
-        color: '#083470',
+        color: '#4bd4c7',
         fontSize: '40px',
         fontWeight: 500,
         margin: '0 0 16px',
         textAlign: 'center',
         lineHeight: 1.15,
+        fontFamily: "'Montserrat', sans-serif",
       }}>
-        One widget. Every tool.
+        One Coelacanth. Many apps.
       </h1>
 
       {/* Subheadline */}
       <p style={{
-        color: '#5d879a',
+        color: '#4bd4c7',
         fontSize: '16px',
         maxWidth: '460px',
         textAlign: 'center',
         lineHeight: 1.65,
         margin: '0 0 36px',
+        fontFamily: "'Montserrat', sans-serif",
       }}>
-        Coelacanth is the last interface you&apos;ll ever need.
-        A single desktop widget that connects to all your apps —
-        Gmail, Slack, Notion, Figma, and more.
-        Just type it. Consider it done.
+        A single Coelacanth that connects to all your apps.
       </p>
 
       {/* Fish */}

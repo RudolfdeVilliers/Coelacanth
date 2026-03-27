@@ -61,3 +61,16 @@ create index if not exists waitlist_signed_up on waitlist(signed_up_at desc);
 
 -- File attachments on ideas
 alter table ideas add column if not exists attachment_path text;
+
+-- OAuth tokens for Gmail, Slack, etc.
+create table if not exists oauth_tokens (
+  id uuid default gen_random_uuid() primary key,
+  org_slug text not null,
+  provider text not null,
+  access_token text not null,
+  refresh_token text,
+  expiry timestamptz,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(org_slug, provider)
+);

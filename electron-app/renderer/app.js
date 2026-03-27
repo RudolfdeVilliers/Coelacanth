@@ -1,32 +1,43 @@
 const API_BASE = 'https://coelacanth-zeta.vercel.app'
 
-const pill         = document.getElementById('pill')
-const ideaInput    = document.getElementById('idea-input')
-const pillRow2     = document.getElementById('pill-row2')
-const categorySelect = document.getElementById('category-select')
-const submitBtn    = document.getElementById('submit-btn')
-const attachBtn    = document.getElementById('attach-btn')
-const fileInput    = document.getElementById('file-input')
+const pill        = document.getElementById('pill')
+const ideaInput   = document.getElementById('idea-input')
+const attachBtn   = document.getElementById('attach-btn')
+const fileInput   = document.getElementById('file-input')
+const resultArea  = document.getElementById('result-area')
+const resultIcon  = document.getElementById('result-icon')
+const resultText  = document.getElementById('result-text')
 
 let orgSlug = ''
 let selectedFile = null
-let isExpanded = false
-let anonymous = true
+let resultTimer = null
 
-// ── Load org slug ─────────────────────────────────────────────────────────────
+// ── Rotating placeholders ─────────────────────────────────────────────────────
 
-window.electronAPI.getOrgSlug().then(slug => {
-  orgSlug = slug
-})
+const PLACEHOLDERS = [
+  "Email Sarah about tomorrow's meeting...",
+  'Send a Slack message to #general...',
+  'Find the Q4 report PDF...',
+  'Message the team on Slack...',
+]
+let placeholderIdx = 0
 
-// ── Reset on show ─────────────────────────────────────────────────────────────
+setInterval(() => {
+  if (!ideaInput.value) {
+    placeholderIdx = (placeholderIdx + 1) % PLACEHOLDERS.length
+    ideaInput.placeholder = PLACEHOLDERS[placeholderIdx]
+  }
+}, 3000)
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+window.electronAPI.getOrgSlug().then(slug => { orgSlug = slug })
 
 window.electronAPI.onReset(() => {
   reset()
   setTimeout(() => ideaInput.focus(), 60)
 })
 
-// Focus input when clicking anywhere on the pill
 pill.addEventListener('click', () => ideaInput.focus())
 
 // ── Keyboard ──────────────────────────────────────────────────────────────────
@@ -39,26 +50,14 @@ ideaInput.addEventListener('keydown', e => {
   }
   if (e.key === 'Enter') {
     e.preventDefault()
-    if (!ideaInput.value.trim()) return
-    if (!isExpanded) {
-      expand()
-    } else {
-      doSubmit()
-    }
-  }
-})
-
-// Cmd+Enter / Ctrl+Enter also submits from anywhere
-document.addEventListener('keydown', e => {
-  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-    e.preventDefault()
-    if (isExpanded) doSubmit()
+    const command = ideaInput.value.trim()
+    if (command) executeCommand(command)
   }
 })
 
 // ── File attach ───────────────────────────────────────────────────────────────
 
-attachBtn.addEventListener('click', (e) => {
+attachBtn.addEventListener('click', e => {
   e.stopPropagation()
   fileInput.click()
 })
@@ -67,104 +66,75 @@ fileInput.addEventListener('change', () => {
   selectedFile = fileInput.files[0] || null
 })
 
-// ── Submit button ─────────────────────────────────────────────────────────────
+// ── Execute command ───────────────────────────────────────────────────────────
 
-submitBtn.addEventListener('click', () => doSubmit())
-
-// ── Expand to show category + toggle ─────────────────────────────────────────
-
-function expand() {
-  isExpanded = true
-  pill.classList.add('hovered')
-  pillRow2.classList.add('visible')
-  categorySelect.focus()
-}
-
-// ── Submit ────────────────────────────────────────────────────────────────────
-
-async function doSubmit() {
-  const idea = ideaInput.value.trim()
-
-  if (!idea || idea.length < 5) {
-    ideaInput.classList.add('error')
-    ideaInput.focus()
-    return
-  }
-
+async function executeCommand(command) {
   if (!orgSlug) {
     window.electronAPI.openSettings()
     return
   }
 
-  submitBtn.textContent = '…'
-  submitBtn.disabled = true
+  setLoading(true)
 
   try {
-    let filePayload = null
-    if (selectedFile) {
-      const base64 = await fileToBase64(selectedFile)
-      filePayload = { name: selectedFile.name, type: selectedFile.type, data: base64 }
-    }
-
-    const res = await fetch(`${API_BASE}/api/submit`, {
+    const res = await fetch(`${API_BASE}/api/command`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // ANONYMITY: do not add user tracking here
-      body: JSON.stringify({
-        idea,
-        category: categorySelect.value || undefined,
-        orgSlug,
-        anonymous: true,
-        ...(filePayload ? { file: filePayload } : {}),
-      }),
+      body: JSON.stringify({ command, orgSlug }),
     })
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      throw new Error(data.error || 'Submission failed')
+    const data = await res.json()
+
+    if (!res.ok || !data.ok) {
+      showResult(false, data.message || data.error || 'Something went wrong.')
+    } else {
+      showResult(true, data.message || 'Done.')
     }
+  } catch {
+    showResult(false, 'Could not reach Coelacanth. Check your connection.')
+  }
 
-    // Success: flash cyan then hide
-    pillRow2.classList.remove('visible')
-    pill.classList.remove('hovered')
-    pill.classList.add('success')
+  setLoading(false)
+  ideaInput.value = ''
+}
 
-    setTimeout(() => {
-      reset()
-      window.electronAPI.hideWindow()
-    }, 750)
+// ── State helpers ─────────────────────────────────────────────────────────────
 
-  } catch (err) {
-    submitBtn.textContent = 'Submit'
-    submitBtn.disabled = false
-    ideaInput.placeholder = err.message || 'Error — try again'
-    setTimeout(() => {
-      ideaInput.placeholder = 'Share an idea or suggestion...'
-    }, 2500)
+function setLoading(on) {
+  if (on) {
+    pill.classList.add('loading')
+    ideaInput.disabled = true
+  } else {
+    pill.classList.remove('loading')
+    ideaInput.disabled = false
+    ideaInput.focus()
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+function showResult(success, message) {
+  clearTimeout(resultTimer)
+  resultArea.classList.remove('hidden', 'fading', 'error-state')
+  resultIcon.textContent = success ? '✓' : '✕'
+  resultText.textContent = message
+  if (!success) resultArea.classList.add('error-state')
 
-function reset() {
-  ideaInput.value = ''
-  ideaInput.placeholder = 'Share an idea or suggestion...'
-  ideaInput.classList.remove('error')
-  categorySelect.value = ''
-  selectedFile = null
-  fileInput.value = ''
-  isExpanded = false
-  pill.classList.remove('hovered', 'success')
-  pillRow2.classList.remove('visible')
-  submitBtn.textContent = 'Submit'
-  submitBtn.disabled = false
+  resultTimer = setTimeout(() => {
+    resultArea.classList.add('fading')
+    setTimeout(() => {
+      resultArea.classList.add('hidden')
+      resultArea.classList.remove('fading', 'error-state')
+    }, 400)
+  }, 4000)
 }
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => resolve(reader.result.split(',')[1])
-    reader.onerror = reject
-    reader.readAsDataURL(file)
-  })
+function reset() {
+  clearTimeout(resultTimer)
+  ideaInput.value = ''
+  ideaInput.disabled = false
+  ideaInput.placeholder = PLACEHOLDERS[0]
+  selectedFile = null
+  fileInput.value = ''
+  pill.classList.remove('loading')
+  resultArea.classList.add('hidden')
+  resultArea.classList.remove('fading', 'error-state')
 }

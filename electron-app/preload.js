@@ -6,4 +6,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   hideWindow: () => ipcRenderer.send('hide-window'),
   openSettings: () => ipcRenderer.send('open-settings'),
   onReset: (callback) => ipcRenderer.on('reset', callback),
+  openExternal: (url) => ipcRenderer.send('open-external', url),
 })

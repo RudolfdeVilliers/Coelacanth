@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, screen, nativeImage } = require('electron')
+const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, screen, nativeImage, shell } = require('electron')
 const path = require('path')
 const Store = require('electron-store')
 
@@ -77,7 +77,7 @@ function openSettings() {
   }
   settingsWindow = new BrowserWindow({
     width: 400,
-    height: 220,
+    height: 380,
     title: 'Coelacanth Settings',
     resizable: false,
     minimizable: false,
@@ -145,3 +145,5 @@ ipcMain.handle('set-org-slug', (_, slug) => {
 ipcMain.on('hide-window', () => hideWindow())
 
 ipcMain.on('open-settings', () => openSettings())
+
+ipcMain.on('open-external', (_, url) => shell.openExternal(url))

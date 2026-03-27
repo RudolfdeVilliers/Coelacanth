@@ -10,9 +10,10 @@
 
     body {
       font-family: 'DM Sans', sans-serif;
-      padding: 28px 24px 24px;
-      background: #ffffff;
+      padding: 24px;
+      background: #fff;
       color: #111827;
+      font-size: 14px;
     }
 
     .header {
@@ -23,10 +24,11 @@
     }
 
     .header-dot {
-      width: 14px;
-      height: 14px;
+      width: 12px;
+      height: 12px;
       background: #5ce1e6;
       border-radius: 50%;
+      flex-shrink: 0;
     }
 
     h2 {
@@ -37,11 +39,12 @@
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
+      font-weight: 600;
       color: #5d879a;
-      margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      margin-bottom: 6px;
     }
 
     input[type="text"] {
@@ -61,8 +64,8 @@
       box-shadow: 0 0 0 3px rgba(92, 225, 230, 0.15);
     }
 
-    button {
-      margin-top: 14px;
+    .save-btn {
+      margin-top: 10px;
       width: 100%;
       background: #083470;
       color: white;
@@ -76,18 +79,88 @@
       transition: background 0.15s;
     }
 
-    button:hover { background: #0a4494; }
+    .save-btn:hover { background: #0a4494; }
 
     #saved-msg {
-      margin-top: 10px;
+      min-height: 18px;
+      margin-top: 8px;
       font-size: 12px;
       color: #5ce1e6;
       text-align: center;
-      min-height: 18px;
     }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #f0f4f8;
+      margin: 18px 0;
+    }
+
+    h3 {
+      font-size: 11px;
+      font-weight: 600;
+      color: #5d879a;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .conn-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4f8;
+    }
+
+    .conn-row:last-child { border-bottom: none; }
+
+    .conn-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .conn-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d1d5db;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .conn-dot.connected { background: #22c55e; }
+
+    .conn-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .conn-status {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-left: 4px;
+    }
+
+    .conn-btn {
+      background: #f0f4f8;
+      color: #083470;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .conn-btn:hover { background: #e0e8f0; }
   </style>
 </head>
 <body>
+
   <div class="header">
     <div class="header-dot"></div>
     <h2>Coelacanth Settings</h2>
@@ -101,15 +174,41 @@
     autocomplete="off"
     spellcheck="false"
   />
-
-  <button id="save-btn">Save</button>
+  <button class="save-btn" id="save-btn">Save</button>
   <div id="saved-msg"></div>
 
+  <hr class="divider" />
+
+  <h3>Connections</h3>
+
+  <div class="conn-row">
+    <div class="conn-left">
+      <span class="conn-dot" id="gmail-dot"></span>
+      <span class="conn-name">Gmail</span>
+      <span class="conn-status" id="gmail-status">Not connected</span>
+    </div>
+    <button class="conn-btn" id="gmail-btn">Connect</button>
+  </div>
+
+  <div class="conn-row">
+    <div class="conn-left">
+      <span class="conn-dot" id="slack-dot"></span>
+      <span class="conn-name">Slack</span>
+      <span class="conn-status" id="slack-status">Not connected</span>
+    </div>
+    <button class="conn-btn" id="slack-btn">Connect</button>
+  </div>
+
   <script>
+    const API = 'https://coelacanth-zeta.vercel.app'
+
+    // Load saved org slug and check status
     window.electronAPI.getOrgSlug().then(slug => {
       document.getElementById('slug-input').value = slug || ''
+      if (slug) checkStatus(slug)
     })
 
+    // Save
     document.getElementById('save-btn').addEventListener('click', async () => {
       const slug = document.getElementById('slug-input').value.trim()
       if (!slug) return
@@ -117,10 +216,47 @@
       const msg = document.getElementById('saved-msg')
       msg.textContent = 'Saved!'
       setTimeout(() => { msg.textContent = '' }, 2000)
+      checkStatus(slug)
     })
 
     document.getElementById('slug-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') document.getElementById('save-btn').click()
+    })
+
+    // Check connection status for both providers
+    async function checkStatus(slug) {
+      for (const provider of ['gmail', 'slack']) {
+        try {
+          const res = await fetch(
+            `${API}/api/auth/status?orgSlug=${encodeURIComponent(slug)}&provider=${provider}`
+          )
+          const data = await res.json()
+          document.getElementById(`${provider}-dot`).classList.toggle('connected', !!data.connected)
+          document.getElementById(`${provider}-status`).textContent =
+            data.connected ? 'Connected' : 'Not connected'
+          document.getElementById(`${provider}-btn`).textContent =
+            data.connected ? 'Reconnect' : 'Connect'
+        } catch {
+          // API unreachable (dev mode) — leave as default
+        }
+      }
+    }
+
+    // Connect buttons open OAuth flow in default browser
+    document.getElementById('gmail-btn').addEventListener('click', async () => {
+      const slug = await window.electronAPI.getOrgSlug()
+      if (!slug) { alert('Save your organisation code first.'); return }
+      window.electronAPI.openExternal(
+        `${API}/api/auth/gmail?orgSlug=${encodeURIComponent(slug)}`
+      )
+    })
+
+    document.getElementById('slack-btn').addEventListener('click', async () => {
+      const slug = await window.electronAPI.getOrgSlug()
+      if (!slug) { alert('Save your organisation code first.'); return }
+      window.electronAPI.openExternal(
+        `${API}/api/auth/slack?orgSlug=${encodeURIComponent(slug)}`
+      )
     })
   </script>
 </body>

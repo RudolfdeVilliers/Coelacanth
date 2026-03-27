@@ -8,7 +8,7 @@
 
 html, body {
   width: 620px;
-  height: 240px;
+  height: 200px;
   overflow: hidden;
   background: transparent;
   -webkit-app-region: no-drag;
@@ -32,7 +32,7 @@ html, body {
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 30px;
-  transition: background 0.18s ease, border-color 0.18s ease, border-radius 0.18s ease;
+  transition: background 0.18s ease, border-color 0.18s ease;
   cursor: text;
 }
 
@@ -41,17 +41,16 @@ html, body {
   border-color: #d4d600;
 }
 
-/* Hovered class is added by JS when expanded so yellow persists */
-.pill.hovered {
-  background: #F7FE4F;
-  border-color: #d4d600;
-  border-radius: 22px;
+/* ── Loading pulse ────────────────────────────────────────────────────────── */
+
+@keyframes pillPulse {
+  0%, 100% { border-color: rgba(255, 255, 255, 0.15); }
+  50%       { border-color: rgba(92, 225, 230, 0.8); box-shadow: 0 0 0 3px rgba(92, 225, 230, 0.1); }
 }
 
-/* Success flash */
-.pill.success {
-  background: #5ce1e6 !important;
-  border-color: #5ce1e6 !important;
+.pill.loading {
+  animation: pillPulse 1.2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* ── Row 1 ────────────────────────────────────────────────────────────────── */
@@ -80,8 +79,7 @@ html, body {
   transition: color 0.18s;
 }
 
-.pill:hover .search-icon,
-.pill.hovered .search-icon {
+.pill:hover .search-icon {
   color: rgba(26, 26, 0, 0.45);
 }
 
@@ -97,24 +95,28 @@ html, body {
   color: rgba(255, 255, 255, 0.92);
   caret-color: white;
   -webkit-app-region: no-drag;
+  transition: color 0.18s;
 }
 
 .pill-input::placeholder {
   color: rgba(255, 255, 255, 0.38);
+  transition: color 0.18s;
 }
 
-.pill:hover .pill-input,
-.pill.hovered .pill-input {
+.pill:hover .pill-input {
   color: #1a1a00;
   caret-color: #1a1a00;
 }
 
-.pill:hover .pill-input::placeholder,
-.pill.hovered .pill-input::placeholder {
+.pill:hover .pill-input::placeholder {
   color: rgba(26, 26, 0, 0.38);
 }
 
-/* Attach button — visible on pill hover */
+.pill-input:disabled {
+  opacity: 0.5;
+}
+
+/* Attach button — appears on pill hover */
 .attach-btn {
   flex-shrink: 0;
   opacity: 0;
@@ -142,107 +144,55 @@ html, body {
   display: none;
 }
 
-/* ── Row 2 (expanded) ─────────────────────────────────────────────────────── */
+/* ── Result card ──────────────────────────────────────────────────────────── */
 
-.pill-row2 {
-  display: none;
+.result-area {
+  width: 580px;
+  background: rgba(15, 15, 15, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(92, 225, 230, 0.25);
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px 14px;
-  border-top: 1px solid rgba(26, 26, 0, 0.15);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: #5ce1e6;
+  opacity: 1;
+  transition: opacity 0.4s ease;
 }
 
-.pill-row2.visible {
-  display: flex;
+.result-area.hidden {
+  display: none;
 }
 
-.category-select {
+.result-area.fading {
+  opacity: 0;
+}
+
+.result-area.error-state {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.25);
+}
+
+.result-icon {
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.result-text {
   flex: 1;
-  background: rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.14);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  color: #1a1a00;
-  outline: none;
-  cursor: pointer;
-  -webkit-app-region: no-drag;
+  line-height: 1.4;
 }
 
-.anon-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.anon-label {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px;
-  color: rgba(26, 26, 0, 0.55);
-}
-
-.toggle-pill {
-  width: 32px;
-  height: 18px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.15);
-  position: relative;
-  cursor: pointer;
-  transition: background 0.2s;
-  flex-shrink: 0;
-  -webkit-app-region: no-drag;
-}
-
-.toggle-pill.on {
-  background: #5ce1e6;
-}
-
-.toggle-thumb {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: white;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.2s;
-}
-
-.toggle-pill.on .toggle-thumb {
-  transform: translateX(14px);
-}
-
-.submit-btn {
-  flex-shrink: 0;
-  background: #083470;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 18px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, opacity 0.15s;
-  -webkit-app-region: no-drag;
-}
-
-.submit-btn:hover {
-  background: #0a4494;
-}
-
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ── Hint text ───────────────────────────────────────────────────────────── */
+/* ── Hint ─────────────────────────────────────────────────────────────────── */
 
 .hint {
   font-family: 'DM Sans', sans-serif;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.25);
   letter-spacing: 0.02em;
 }

@@ -1,6 +1,12 @@
+@import url('https://fonts.cdnfonts.com/css/roca');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.roca {
+  font-family: 'Roca One', cursive;
+}
 
 @keyframes fishBob {
   0%, 100% { transform: translateY(-8px); }

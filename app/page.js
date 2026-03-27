@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 
-const rocaOne = { fontFamily: "'Roca One', sans-serif" }
+const rocaOne = { fontFamily: "'Roca One', cursive" }
 
 export default function WaitlistPage() {
   const [email, setEmail] = useState('')

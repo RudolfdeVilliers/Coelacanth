@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coelacanth Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      padding: 28px 24px 24px;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .header-dot {
+      width: 14px;
+      height: 14px;
+      background: #5ce1e6;
+      border-radius: 50%;
+    }
+
+    h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #083470;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #5d879a;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      border: 1.5px solid #e0e8f0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #5ce1e6;
+      box-shadow: 0 0 0 3px rgba(92, 225, 230, 0.15);
+    }
+
+    button {
+      margin-top: 14px;
+      width: 100%;
+      background: #083470;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    button:hover { background: #0a4494; }
+
+    #saved-msg {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #5ce1e6;
+      text-align: center;
+      min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-dot"></div>
+    <h2>Coelacanth Settings</h2>
+  </div>
+
+  <label for="slug-input">Organisation code</label>
+  <input
+    type="text"
+    id="slug-input"
+    placeholder="e.g. acme-corp"
+    autocomplete="off"
+    spellcheck="false"
+  />
+
+  <button id="save-btn">Save</button>
+  <div id="saved-msg"></div>
+
+  <script>
+    window.electronAPI.getOrgSlug().then(slug => {
+      document.getElementById('slug-input').value = slug || ''
+    })
+
+    document.getElementById('save-btn').addEventListener('click', async () => {
+      const slug = document.getElementById('slug-input').value.trim()
+      if (!slug) return
+      await window.electronAPI.setOrgSlug(slug)
+      const msg = document.getElementById('saved-msg')
+      msg.textContent = 'Saved!'
+      setTimeout(() => { msg.textContent = '' }, 2000)
+    })
+
+    document.getElementById('slug-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('save-btn').click()
+    })
+  </script>
+</body>
+</html>

@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import Image from 'next/image'
 
+const rocaOne = { fontFamily: "'Roca One', sans-serif" }
+
 export default function WaitlistPage() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | loading | success | error
@@ -49,9 +51,10 @@ export default function WaitlistPage() {
 
       {/* Brand name */}
       <p style={{
+        ...rocaOne,
         color: '#083470',
         fontSize: '13px',
-        fontWeight: 500,
+        fontWeight: 400,
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
         marginBottom: '8px',
@@ -59,29 +62,32 @@ export default function WaitlistPage() {
         Coelacanth
       </p>
 
-      {/* Tagline */}
+      {/* Headline */}
       <h1 style={{
+        ...rocaOne,
         color: '#083470',
-        fontSize: '32px',
-        fontWeight: 500,
+        fontSize: '40px',
+        fontWeight: 400,
         margin: '0 0 16px',
         textAlign: 'center',
-        lineHeight: 1.2,
+        lineHeight: 1.15,
       }}>
-        Rising from the deep.
+        One voice. Every tool.
       </h1>
 
-      {/* Subtext */}
+      {/* Subheadline */}
       <p style={{
         color: '#5d879a',
         fontSize: '16px',
-        maxWidth: '420px',
+        maxWidth: '460px',
         textAlign: 'center',
-        lineHeight: 1.6,
+        lineHeight: 1.65,
         margin: '0 0 36px',
       }}>
-        Anonymous employee feedback that surfaces what surveys miss.
-        Weekly AI insights for leadership. Launching soon.
+        Coelacanth is the last interface you&apos;ll ever need.
+        A single voice-activated desktop widget that connects to all your apps —
+        Gmail, Slack, Notion, Figma, and more.
+        Just say it. Consider it done.
       </p>
 
       {/* Fish */}
@@ -138,7 +144,7 @@ export default function WaitlistPage() {
           <input
             type="email"
             required
-            placeholder="your work email"
+            placeholder="your email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             disabled={status === 'loading'}
@@ -190,10 +196,25 @@ export default function WaitlistPage() {
               {errorMsg}
             </p>
           )}
+
+          {/* Small print */}
+          <p style={{
+            width: '100%',
+            textAlign: 'center',
+            fontSize: '11px',
+            color: '#5d879a',
+            fontStyle: 'italic',
+            maxWidth: '380px',
+            margin: '8px auto 0',
+            lineHeight: 1.5,
+          }}>
+            The first 410 individuals, teams and companies to sign up will receive
+            exclusive founding member pricing and priority access for their first year.
+          </p>
         </form>
       )}
 
-      {/* Mobile style — stack input/button below 480px */}
+      {/* Mobile */}
       <style>{`
         @media (max-width: 480px) {
           form {

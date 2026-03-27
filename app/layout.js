@@ -7,13 +7,16 @@ const dmSans = DM_Sans({
 })
 
 export const metadata = {
-  title: 'Coelacanth — Anonymous Employee Feedback',
-  description: 'Your team has ideas. Surveys don\'t catch them.',
+  title: 'Coelacanth — One voice. Every tool.',
+  description: 'The voice-activated desktop widget that connects to all your apps. Gmail, Slack, Notion, Figma and more. One interface for everything.',
 }
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={dmSans.className}>
+      <head>
+        <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/roca" />
+      </head>
       <body className="bg-white text-gray-900 antialiased">
         {children}
       </body>

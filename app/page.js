@@ -68,7 +68,7 @@ export default function WaitlistPage() {
         textAlign: 'center',
         lineHeight: 1.15,
       }}>
-        One voice. Every tool.
+        One widget. Every tool.
       </h1>
 
       {/* Subheadline */}
@@ -81,9 +81,9 @@ export default function WaitlistPage() {
         margin: '0 0 36px',
       }}>
         Coelacanth is the last interface you&apos;ll ever need.
-        A single voice-activated desktop widget that connects to all your apps —
+        A single desktop widget that connects to all your apps —
         Gmail, Slack, Notion, Figma, and more.
-        Just say it. Consider it done.
+        Just type it. Consider it done.
       </p>
 
       {/* Fish */}

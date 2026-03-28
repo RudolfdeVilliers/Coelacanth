@@ -4,9 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes fishBob {
-  0%, 100% { transform: translateY(-8px); }
-  50%       { transform: translateY(8px); }
+@keyframes fishSwim {
+  0%   { transform: translateY(0px) rotate(0deg) scaleX(1); }
+  25%  { transform: translateY(-6px) rotate(1.5deg) scaleX(1.01); }
+  50%  { transform: translateY(0px) rotate(0deg) scaleX(1); }
+  75%  { transform: translateY(6px) rotate(-1.5deg) scaleX(1.01); }
+  100% { transform: translateY(0px) rotate(0deg) scaleX(1); }
 }
 
 @keyframes finShimmer {
@@ -15,7 +18,7 @@
 }
 
 .fish-bob {
-  animation: fishBob 4s ease-in-out infinite;
+  animation: fishSwim 3s ease-in-out infinite;
 }
 
 .fish-wrap {

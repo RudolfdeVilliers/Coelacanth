@@ -204,8 +204,8 @@ export default function WaitlistPage() {
             margin: '8px auto 0',
             lineHeight: 1.5,
           }}>
-            Be one of the 410 to sign up and receive exclusive pricing
-            and priority access for their first year.
+            Only 410 founder spots. Sign up now and lock in exclusive pricing
+            and priority access for your first year.
           </p>
         </form>
       )}

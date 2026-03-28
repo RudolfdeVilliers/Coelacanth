@@ -36,18 +36,33 @@ export async function POST(req) {
 
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-  const parsePrompt = `You are parsing a natural language command for Coelacanth.
-Extract the intent and details from this command: "${command.replace(/"/g, '\\"')}"
+  const parsePrompt = `You are a command parser for Coelacanth, a desktop widget that controls apps via natural language.
 
-Return JSON only:
+Parse this command: "${command}"
+
+Rules:
+- If it mentions email, gmail, send, message to an address → action is "send_email"
+- If it mentions slack, channel, #, team message → action is "send_slack"
+- If it mentions find, open, search, file, document, pdf → action is "find_file"
+- Be generous in interpretation — err on the side of understanding
+
+Extract:
+- to: the recipient name or email address
+- email: email address if you can find or infer one
+- subject: infer a short subject from context
+- body: the main message content
+- channel: slack channel if mentioned
+- filename: file name if mentioned
+
+Return ONLY a JSON object, no markdown, no explanation:
 {
-  "action": "send_email" | "send_slack" | "find_file" | "unknown",
-  "to": "recipient name or email",
-  "email": "email address if mentioned",
-  "subject": "inferred email subject",
-  "body": "the message to send",
-  "channel": "slack channel if mentioned (without #)",
-  "filename": "file name if mentioned"
+  "action": "send_email",
+  "to": "name or email",
+  "email": "email@example.com",
+  "subject": "inferred subject",
+  "body": "message body",
+  "channel": "",
+  "filename": ""
 }`
 
   let parsed
@@ -70,10 +85,15 @@ Return JSON only:
   const { action } = parsed
 
   if (action === 'unknown') {
-    return Response.json(
-      { ok: false, message: 'Try: "Email [name] about..." or "Send a Slack message to #channel saying..."' },
-      { headers: corsHeaders }
-    )
+    const lower = command.toLowerCase()
+    if (lower.includes('email') || lower.includes('send')) {
+      parsed.action = 'send_email'
+    } else {
+      return Response.json(
+        { ok: false, message: 'Try: "Email [name] about..." or "Send a Slack message to #channel saying..."' },
+        { headers: corsHeaders }
+      )
+    }
   }
 
   if (action === 'find_file') {

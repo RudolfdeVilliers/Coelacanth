@@ -1,4 +1,4 @@
-const { app, BrowserWindow, globalShortcut, Tray, Menu, ipcMain, screen, nativeImage, shell } = require('electron')
+const { app, BrowserWindow, globalShortcut, Tray, Menu, MenuItem, ipcMain, screen, nativeImage, shell } = require('electron')
 const path = require('path')
 const Store = require('electron-store')
 
@@ -34,6 +34,21 @@ function createMainWindow() {
   })
 
   mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'))
+
+  mainWindow.webContents.on('context-menu', (e, params) => {
+    const menu = new Menu()
+    menu.append(new MenuItem({
+      label: 'Paste',
+      accelerator: 'CmdOrCtrl+V',
+      click: () => mainWindow.webContents.paste()
+    }))
+    menu.append(new MenuItem({
+      label: 'Copy',
+      accelerator: 'CmdOrCtrl+C',
+      click: () => mainWindow.webContents.copy()
+    }))
+    menu.popup()
+  })
 
   // Auto-hide when window loses focus
   mainWindow.on('blur', () => {

@@ -95,6 +95,8 @@ html, body {
   color: rgba(255, 255, 255, 0.92);
   caret-color: white;
   -webkit-app-region: no-drag;
+  -webkit-user-select: text;
+  user-select: text;
   transition: color 0.18s;
 }
 

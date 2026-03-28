@@ -5,6 +5,8 @@ import { sendMessage } from '@/lib/connectors/slack'
 
 export const dynamic = 'force-dynamic'
 
+console.log('ANTHROPIC_API_KEY set:', !!process.env.ANTHROPIC_API_KEY)
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -69,15 +71,17 @@ Return ONLY a JSON object, no markdown, no explanation:
   try {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 256,
+      max_tokens: 500,
       messages: [{ role: 'user', content: parsePrompt }],
     })
-    console.log('Claude response:', message.content[0].text)
-    parsed = JSON.parse(message.content[0].text)
-    console.log('Parsed intent:', parsed)
-  } catch {
+    console.log('Claude raw response:', message.content[0]?.text)
+    const cleanText = message.content[0].text.replace(/```json|```/g, '').trim()
+    parsed = JSON.parse(cleanText)
+    console.log('Parsed intent:', JSON.stringify(parsed))
+  } catch (parseError) {
+    console.error('Claude parse error:', parseError.message)
     return Response.json(
-      { ok: false, message: "Couldn't understand that command." },
+      { ok: false, message: 'Claude error: ' + parseError.message },
       { headers: corsHeaders }
     )
   }

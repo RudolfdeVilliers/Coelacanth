@@ -51,7 +51,7 @@ export default function WaitlistPage() {
       <p style={{
         color: '#4bd4c7',
         fontSize: '13px',
-        fontWeight: 400,
+        fontWeight: 700,
         letterSpacing: '0.2em',
         textTransform: 'uppercase',
         marginBottom: '8px',
@@ -64,7 +64,7 @@ export default function WaitlistPage() {
       <h1 style={{
         color: '#4bd4c7',
         fontSize: '40px',
-        fontWeight: 500,
+        fontWeight: 700,
         margin: '0 0 16px',
         textAlign: 'center',
         lineHeight: 1.15,
@@ -83,7 +83,7 @@ export default function WaitlistPage() {
         margin: '0 0 36px',
         fontFamily: "'Montserrat', sans-serif",
       }}>
-        A single Coelacanth that connects to all your apps.
+        Coelacanth makes switching between apps extinct.
       </p>
 
       {/* Fish */}
@@ -204,8 +204,8 @@ export default function WaitlistPage() {
             margin: '8px auto 0',
             lineHeight: 1.5,
           }}>
-            The first 410 individuals, teams and companies to sign up will receive
-            exclusive founding member pricing and priority access for their first year.
+            Be one of the 410 to sign up and receive exclusive pricing
+            and priority access for their first year.
           </p>
         </form>
       )}

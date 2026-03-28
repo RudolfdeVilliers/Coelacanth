@@ -25,6 +25,8 @@ export async function POST(req) {
 
   const { command, orgSlug } = body
 
+  console.log('Command received:', command)
+
   if (!command || typeof command !== 'string' || command.trim().length < 2) {
     return Response.json({ error: 'command is required' }, { status: 400, headers: corsHeaders })
   }
@@ -55,7 +57,9 @@ Return JSON only:
       max_tokens: 256,
       messages: [{ role: 'user', content: parsePrompt }],
     })
+    console.log('Claude response:', message.content[0].text)
     parsed = JSON.parse(message.content[0].text)
+    console.log('Parsed intent:', parsed)
   } catch {
     return Response.json(
       { ok: false, message: "Couldn't understand that command." },
